@@ -1,4 +1,4 @@
-﻿namespace Logic
+﻿namespace Logic.DomainObjects
 {
     public enum ProcessResult
     {

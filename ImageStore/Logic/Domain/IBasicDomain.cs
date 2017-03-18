@@ -1,4 +1,6 @@
-﻿namespace Logic.Domain
+﻿using Logic.DomainObjects;
+
+namespace Logic.Domain
 {
     public interface IBasicDomain<T, in T2>
     {

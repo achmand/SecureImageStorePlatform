@@ -2,6 +2,7 @@
 using Common;
 using Common.Utilities;
 using DataAccess.Repositories;
+using Logic.DomainObjects;
 
 namespace Logic.Domain
 {

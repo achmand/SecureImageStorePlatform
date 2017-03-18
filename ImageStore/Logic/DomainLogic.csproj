@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DomainResult.cs" />
+    <Compile Include="DomainObjects\DomainResult.cs" />
     <Compile Include="Domain\IBasicDomain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Domain\UsersDomain.cs" />
