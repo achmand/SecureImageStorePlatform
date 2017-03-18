@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Common;
 using Common.Utilities;
 using DataAccess.Repositories;
@@ -37,6 +38,12 @@ namespace Logic.Domain
 
             return domainResult;
         }
+
+        public IQueryable<Role> GetRoles()
+        {
+            var roles = UsersRepo.GetRoles();
+            return roles;
+        } 
 
         private static string HashString(string text)
         {

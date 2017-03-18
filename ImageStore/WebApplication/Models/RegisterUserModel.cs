@@ -30,9 +30,9 @@ namespace WebApplication.Models
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
+        [DisplayName("Role")]
         [Required(ErrorMessage = "Role is required.")]
-        [Range(1, int.MaxValue, ErrorMessage = "Not a valid role.")]
-        public int? RoleId { get; set; }
+        public string RoleName { get; set; }
 
         public IEnumerable<SelectListItem> RoleList { get; set; }
     }

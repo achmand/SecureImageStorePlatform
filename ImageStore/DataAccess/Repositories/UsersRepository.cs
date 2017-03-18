@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using System.Linq;
+using Common;
 
 namespace DataAccess.Repositories
 {
@@ -15,5 +16,12 @@ namespace DataAccess.Repositories
             var username = user.Username;
             return username;
         }
+
+        public IQueryable<Role> GetRoles()
+        {
+            var roles = StoreDbEntities.Roles;
+            return roles;
+        }
+
     }
 }
