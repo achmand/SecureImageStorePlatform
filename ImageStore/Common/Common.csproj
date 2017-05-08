@@ -73,6 +73,7 @@
     <Compile Include="User.cs">
       <DependentUpon>CommonModels.tt</DependentUpon>
     </Compile>
+    <Compile Include="UserPartial.cs" />
     <Compile Include="Utilities\HomeLessMethods.cs" />
   </ItemGroup>
   <ItemGroup>

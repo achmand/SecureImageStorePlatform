@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.Caching;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Newtonsoft.Json;
@@ -14,17 +16,10 @@ namespace WebApplication.Controllers
         public async Task<ActionResult> Register()
         {
             var registerUser = new RegisterUserModel();
-            var responseMsg = await HttpClient.GetAsync(ApiUri + "/Account/GetRoles");
-            if (!responseMsg.IsSuccessStatusCode)
+            var result = await PopulateRoleList(registerUser);
+            if (!result)
             {
-                RedirectToAction("Index", "Home"); // redirect to something went wrong pag
-            }
-
-            var responseData = responseMsg.Content.ReadAsStringAsync().Result;
-            var roles = JsonConvert.DeserializeObject<List<RolesJson>>(responseData);
-            if (roles != null)
-            {
-                registerUser.RoleList = roles.Select(r => new SelectListItem { Value = r.RoleName, Text = r.RoleName });
+                return RedirectToAction("Index", "Home");
             }
 
             return View(registerUser);
@@ -49,6 +44,25 @@ namespace WebApplication.Controllers
 
             var responseMsg = await HttpClient.PostAsJsonAsync(ApiUri + "/Account/Create", newUser);
             return View();
+        }
+
+        private async Task<bool> PopulateRoleList(RegisterUserModel registerUser)
+        {
+            var responseMsg = await HttpClient.GetAsync(ApiUri + "/Account/GetRoles");
+            if (!responseMsg.IsSuccessStatusCode)
+            {
+                return false;
+            }
+
+            var responseData = responseMsg.Content.ReadAsStringAsync().Result;
+            var roles = JsonConvert.DeserializeObject<List<RolesJson>>(responseData);
+            if (roles == null)
+            {
+                return false;
+            }
+
+            var rolesResult = roles.Select(r => new SelectListItem { Value = r.RoleName, Text = r.RoleName });
+            return true;
         }
     }
 }
