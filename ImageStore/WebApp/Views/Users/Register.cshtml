@@ -6,11 +6,13 @@
 
 <h2>Register</h2>
 
+<div id="result">
+</div>
 
-@using (Html.BeginForm()) 
+@using (Ajax.BeginForm(new AjaxOptions { UpdateTargetId = "result" }))
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>RegisterViewModel</h4>
         <hr />

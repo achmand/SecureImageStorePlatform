@@ -2,11 +2,10 @@
 using System.Web.Http;
 using Common;
 using Logic.Domain;
-using WebApi.Attributes;
+using Logic.DomainObjects;
 
 namespace WebApi.Controllers
 {
-    [RoutePrefix("api/Account")]
     public sealed class AccountController : ApiController
     {
         private UsersDomain _usersDomain;
@@ -35,9 +34,11 @@ namespace WebApi.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidationActionFilter]
         public IHttpActionResult Create(User user)
         {
+            ModelState.Clear();
+            Validate(user);
+
             if (!ModelState.IsValid)
             {
                 var error = new
@@ -49,14 +50,17 @@ namespace WebApi.Controllers
                 return BadRequest(error.ToString());
             }
 
-            /*
-            var result = UsersDomain.Add(user);
-            if (result.ProcessResult == ProcessResult.Failure)
+            var response = UsersDomain.Add(user);
+            if (response.ProcessResult != ProcessResult.Failure) return Ok(response.MessageResult);
             {
-                return BadRequest(result.MessageResult);
-            }*/
+                var error = new
+                {
+                    message = "The request is invalid.",
+                    errors = response.MessageResult
+                };
 
-            return Ok();
+                return BadRequest(error.ToString());
+            }
         }
 
         protected override void Dispose(bool disposing)

@@ -9,7 +9,7 @@ namespace Logic.Domain
 {
     public sealed class UsersDomain : IBasicDomain<string, User>, IDisposable
     {
-        private UsersRepository UsersRepo { get; } // no dependency injection
+        private UsersRepository UsersRepo { get; } 
 
         public UsersDomain()
         {
@@ -26,10 +26,22 @@ namespace Logic.Domain
                 return domainResult;
             }
 
+            var exist = UsersRepo.Exists(u => u.Username.ToLower() == user.ToString().ToLower() || u.Email.ToLower() == user.Email.ToLower());
+            if (exist)
+            {
+                domainResult.MessageResult = "User already exists.";
+                domainResult.ProcessResult = ProcessResult.Failure;
+                return domainResult;
+            }
+
+            var defaultRole = UsersRepo.GetRole(r => r.RoleName == "Default");
+            user.Role = defaultRole;
+
             var hashedPass = HashString(user.Password);
             user.Password = hashedPass;
             user.Version = 1;
             user.DateCreated = HomeLessMethods.GetCurrentTime();
+
             var username = UsersRepo.Add(user);
 
             domainResult.MessageResult = "Registration completed.";

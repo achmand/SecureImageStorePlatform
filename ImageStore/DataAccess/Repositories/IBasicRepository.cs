@@ -1,4 +1,5 @@
-﻿namespace DataAccess.Repositories
+﻿
+namespace DataAccess.Repositories
 {  
     public interface IBasicRepository<in T1, out T2>
     {
