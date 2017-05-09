@@ -20,6 +20,14 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel register)
         {
+            var encodedResponse = Request.Form["g-Recaptcha-Response"];
+            var isCaptchaValid = ReCaptcha.Validate(encodedResponse) == "True";
+
+            if (!isCaptchaValid)
+            {
+                return Json("Captcha is missing. Please try again.", JsonRequestBehavior.AllowGet);
+            }
+
             if (!ModelState.IsValid)
             {
                 var errorList = ModelState.ToDictionary(
@@ -28,6 +36,7 @@ namespace WebApp.Controllers
 
                 return Json(errorList, JsonRequestBehavior.AllowGet);
             }
+
 
             var response = await HttpClient.PostAsJsonAsync(ApiUri + "/Account/Create", register);
             var message = response.Content.ReadAsAsync<object>();

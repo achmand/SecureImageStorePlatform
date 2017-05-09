@@ -14,7 +14,6 @@
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <h4>RegisterViewModel</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
@@ -46,8 +45,11 @@
             <div class="col-md-10">
                 @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                <br/>
+                <div class="g-recaptcha" data-sitekey="6LeGiCAUAAAAAAyaVcO6NQ0I_J3YYXDIbDOB_4ZF"></div>
             </div>
         </div>
+    
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
@@ -57,9 +59,7 @@
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+<script src="https://www.google.com/recaptcha/api.js"></script>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
