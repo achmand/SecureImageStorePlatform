@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Entity.Validation;
 using System.Linq;
 using Common;
 
@@ -9,24 +8,35 @@ namespace DataAccess.Repositories
     {
         public string Add(User user)
         {
-            try
+            if (user == null)
             {
-                if (user == null)
-                {
-                    return null;
-                }
-
-                StoreDbEntities.Users.Add(user);
-                SaveDatabase();
-                var username = user.Username;
-                return username;
+                return null;
             }
 
-            catch (DbEntityValidationException e)
-            {
-                throw new Exception(e.Message);
-            }
-      
+            StoreDbEntities.Users.Add(user);
+            SaveDatabase();
+            var username = user.Username;
+            return username;
+        }
+
+        public string Update(User user)
+        {
+            StoreDbEntities.Users.Attach(user);
+
+            var entry = StoreDbEntities.Entry(user);
+            entry.Property(u => u.Actived).IsModified = true;
+            entry.Property(u => u.LoginTries).IsModified = true;
+            entry.Property(u => u.Locked).IsModified = true;
+
+            SaveDatabase();
+
+            var username = user.Username;
+            return username;
+        }
+
+        public User GetByIdentifier(Func<User, bool> where)
+        {
+            return StoreDbEntities.Users.SingleOrDefault(where);
         }
 
         public bool Exists(Func<User, bool> where)

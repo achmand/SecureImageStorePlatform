@@ -21,7 +21,8 @@ namespace WebApp.Controllers
         public async Task<ActionResult> Register(RegisterViewModel register)
         {
             var encodedResponse = Request.Form["g-Recaptcha-Response"];
-            var isCaptchaValid = ReCaptcha.Validate(encodedResponse) == "True";
+            var result = ReCaptcha.Validate(encodedResponse);
+            var isCaptchaValid = result.ToLower() == "true";
 
             if (!isCaptchaValid)
             {
@@ -37,15 +38,20 @@ namespace WebApp.Controllers
                 return Json(errorList, JsonRequestBehavior.AllowGet);
             }
 
-
             var response = await HttpClient.PostAsJsonAsync(ApiUri + "/Account/Create", register);
             var message = response.Content.ReadAsAsync<object>();
             return Json(message, JsonRequestBehavior.AllowGet);
         }
 
-        #region Helpers
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> LogIn(LoginViewModel loginViewModel)
+        {
+            var response = await HttpClient.PostAsJsonAsync(ApiUri + "/Account/Authenticate", loginViewModel);
+            var message = response.Content.ReadAsAsync<object>();
+            return Json(message, JsonRequestBehavior.AllowGet);
+        }
 
-
-        #endregion
     }
 }

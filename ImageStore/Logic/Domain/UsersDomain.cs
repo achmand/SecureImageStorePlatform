@@ -9,7 +9,11 @@ namespace Logic.Domain
 {
     public sealed class UsersDomain : IBasicDomain<string, User>, IDisposable
     {
-        private UsersRepository UsersRepo { get; } 
+        private const int LoginTries = 5;
+        private const string DefaultMessage = "Incorrect login information.";
+        private const string LockedMessage = "Account Locked. Please contact admin.";
+
+        private UsersRepository UsersRepo { get; }
 
         public UsersDomain()
         {
@@ -40,6 +44,9 @@ namespace Logic.Domain
             var hashedPass = HashString(user.Password);
             user.Password = hashedPass;
             user.Version = 1;
+            user.LoginTries = 0;
+            user.Actived = true;
+            user.Locked = false;
             user.DateCreated = HomeLessMethods.GetCurrentTime();
 
             var username = UsersRepo.Add(user);
@@ -55,7 +62,74 @@ namespace Logic.Domain
         {
             var roles = UsersRepo.GetRoles();
             return roles;
-        } 
+        }
+
+        public DomainResult<string> AuthenticateUser(string user, string password)
+        {
+            var domainResult = new DomainResult<string>();
+            user = user.ToLower();
+
+            var checkUser = UsersRepo.GetByIdentifier(u => u.Username.ToLower() == user);
+            if (checkUser == null)
+            {
+                domainResult.ProcessResult = ProcessResult.Failure;
+                domainResult.MessageResult = DefaultMessage;
+                return domainResult;
+            }
+
+            if (checkUser.Locked)
+            {
+                domainResult.ProcessResult = ProcessResult.Failure;
+                domainResult.MessageResult = LockedMessage; // TODO -> Send link to unlock 
+                return domainResult;
+            }
+
+            if (!checkUser.Actived)
+            {
+                domainResult.ProcessResult = ProcessResult.Failure;
+                domainResult.MessageResult = "Account not activated.";
+            }
+
+            var hashedPass = checkUser.Password;
+            var valid = BCrypt.Net.BCrypt.Verify(password, hashedPass);
+
+            if (valid)
+            {
+                if (checkUser.LoginTries > 0)
+                {
+                    checkUser.LoginTries = 0;
+                    UpdateLoginTry(checkUser);
+                }
+
+                domainResult.ProcessResult = ProcessResult.Success;
+                domainResult.MessageResult = "Success";
+                return domainResult;
+            }
+
+            var loginTries = checkUser.LoginTries + 1;
+            if (loginTries >= LoginTries)
+            {
+                checkUser.LoginTries = 0;
+                checkUser.Locked = true;
+                UpdateLoginTry(checkUser);
+                domainResult.MessageResult = LockedMessage;
+            }
+            else
+            {
+                checkUser.LoginTries = loginTries;
+                domainResult.MessageResult = DefaultMessage;
+            }
+
+            domainResult.ProcessResult = ProcessResult.Failure;
+            return domainResult;
+        }
+
+        public void Dispose()
+        {
+            UsersRepo.Dispose();
+        }
+
+        #region private methods
 
         private static string HashString(string text)
         {
@@ -69,9 +143,11 @@ namespace Logic.Domain
             return hash;
         }
 
-        public void Dispose()
+        private void UpdateLoginTry(User user)
         {
-            UsersRepo.Dispose();
+            UsersRepo.Update(user);
         }
+
+        #endregion
     }
 }

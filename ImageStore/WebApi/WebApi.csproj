@@ -191,6 +191,9 @@
     <Compile Include="Attributes\ValidationActionFilter.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\AsymmetricParameters.cs" />
+    <Compile Include="Security\SecurityUtil.cs" />
+    <Compile Include="Security\SymmetricParameters.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>

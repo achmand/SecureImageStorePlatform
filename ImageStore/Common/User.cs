@@ -24,6 +24,9 @@ namespace Common
         public string Email { get; set; }
         public string Password { get; set; }
         public string RoleName { get; set; }
+        public int LoginTries { get; set; }
+        public bool Locked { get; set; }
+        public bool Actived { get; set; }
         public int Version { get; set; }
         public System.DateTime DateCreated { get; set; }
     

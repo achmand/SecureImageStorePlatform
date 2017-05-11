@@ -5,16 +5,16 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="d346777539eb4aa4bfcaa111501bbaca" Name="Diagram1">
-        <EntityTypeShape EntityType="ImageStoreDBModel.Image" Width="1.5" PointX="7.5" PointY="1.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="ImageStoreDBModel.LogException" Width="1.5" PointX="2.75" PointY="4.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ImageStoreDBModel.Menu" Width="1.5" PointX="0.75" PointY="1.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="ImageStoreDBModel.Permission" Width="1.5" PointX="0.75" PointY="5.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="ImageStoreDBModel.Role" Width="1.5" PointX="3" PointY="1.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="ImageStoreDBModel.User" Width="1.5" PointX="5.25" PointY="1" IsExpanded="true" />
-        <AssociationConnector Association="ImageStoreDBModel.FK_Images_Users" ManuallyRouted="false" />
-        <AssociationConnector Association="ImageStoreDBModel.FK_Users_Roles" ManuallyRouted="false" />
-        <AssociationConnector Association="ImageStoreDBModel.RolesMenus" ManuallyRouted="false" />
-        <AssociationConnector Association="ImageStoreDBModel.RolesPermissions" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ImageStoreDBModel.Image" Width="1.5" PointX="7.5" PointY="1.5" />
+        <EntityTypeShape EntityType="ImageStoreDBModel.LogException" Width="1.5" PointX="2.75" PointY="5.75" />
+        <EntityTypeShape EntityType="ImageStoreDBModel.Menu" Width="1.5" PointX="0.75" PointY="5.5" />
+        <EntityTypeShape EntityType="ImageStoreDBModel.Permission" Width="1.5" PointX="0.75" PointY="1.625" />
+        <EntityTypeShape EntityType="ImageStoreDBModel.Role" Width="1.5" PointX="3" PointY="1.5" />
+        <EntityTypeShape EntityType="ImageStoreDBModel.User" Width="1.5" PointX="5.25" PointY="1" />
+        <AssociationConnector Association="ImageStoreDBModel.FK_Images_Users" />
+        <AssociationConnector Association="ImageStoreDBModel.FK_Users_Roles" />
+        <AssociationConnector Association="ImageStoreDBModel.RolesMenus" />
+        <AssociationConnector Association="ImageStoreDBModel.RolesPermissions" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

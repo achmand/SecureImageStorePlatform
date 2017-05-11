@@ -20,7 +20,6 @@ namespace Common
             this.Roles = new HashSet<Role>();
         }
     
-        public int PermissionId { get; set; }
         public string PermissionName { get; set; }
         public System.DateTime DateCreated { get; set; }
         public int Version { get; set; }

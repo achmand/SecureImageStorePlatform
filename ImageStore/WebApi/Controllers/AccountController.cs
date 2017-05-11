@@ -6,6 +6,12 @@ using Logic.DomainObjects;
 
 namespace WebApi.Controllers
 {
+    public sealed class LoginModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
     public sealed class AccountController : ApiController
     {
         private UsersDomain _usersDomain;
@@ -30,7 +36,6 @@ namespace WebApi.Controllers
                 _usersDomain = value;
             }
         }
-
 
         [HttpPost]
         [AllowAnonymous]
@@ -61,6 +66,18 @@ namespace WebApi.Controllers
 
                 return BadRequest(error.ToString());
             }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public IHttpActionResult Authenticate(LoginModel loginModel)
+        {
+            if (string.IsNullOrEmpty(loginModel.Username) || string.IsNullOrEmpty(loginModel.Password))
+            {
+                return BadRequest("Invalid inputs.");
+            }
+            
+            return Ok();
         }
 
         protected override void Dispose(bool disposing)
