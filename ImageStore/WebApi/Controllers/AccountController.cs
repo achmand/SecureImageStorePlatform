@@ -3,6 +3,7 @@ using System.Web.Http;
 using Common;
 using Logic.Domain;
 using Logic.DomainObjects;
+using WebApi.Attributes;
 
 namespace WebApi.Controllers
 {
@@ -12,8 +13,11 @@ namespace WebApi.Controllers
         public string Password { get; set; }
     }
 
+    [HmacAuth]
     public sealed class AccountController : ApiController
     {
+        #region properties & variables 
+
         private UsersDomain _usersDomain;
 
         public AccountController()
@@ -36,6 +40,10 @@ namespace WebApi.Controllers
                 _usersDomain = value;
             }
         }
+
+        #endregion
+
+        #region public methods
 
         [HttpPost]
         [AllowAnonymous]
@@ -76,22 +84,24 @@ namespace WebApi.Controllers
             {
                 return BadRequest("Invalid inputs.");
             }
-            
-            return Ok();
-        }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
+            var authenticate = UsersDomain.AuthenticateUser(loginModel.Username, loginModel.Password);
+            if (authenticate.ProcessResult != ProcessResult.Success)
             {
-                if (_usersDomain != null)
-                {
-                    _usersDomain.Dispose();
-                    _usersDomain = null;
-                }
+                return BadRequest(authenticate.MessageResult);
             }
 
-            base.Dispose(disposing);
+            var result =
+                new
+                {
+                    message = authenticate.MessageResult,
+                    username = authenticate.ObjectResult.Username,
+                    role = authenticate.ObjectResult.RoleName
+                };
+
+            return Ok(result);
         }
+
+        #endregion
     }
 }

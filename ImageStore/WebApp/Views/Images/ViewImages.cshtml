@@ -1,0 +1,31 @@
+﻿@using WebApp.Helpers
+@model IEnumerable<Common.Image>
+
+@{
+    ViewBag.Title = "View Images";
+}
+
+<h2>View Images</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.EncodedActionLink("View Image", "ViewImage", "Images", new {imageId = item.ImageId}, null) |
+                @Html.EncodedActionLink("Download Image", "DownloadImage", "Images", new { imageId = item.ImageId }, null) 
+            </td>
+        </tr>
+    }
+</table>

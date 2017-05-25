@@ -46,8 +46,12 @@
   <ItemGroup>
     <Compile Include="DomainObjects\DomainResult.cs" />
     <Compile Include="Domain\IBasicDomain.cs" />
+    <Compile Include="Domain\ImagesDomain.cs" />
+    <Compile Include="Domain\LogsDomain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Domain\UsersDomain.cs" />
+    <Compile Include="Security\Encryption.cs" />
+    <Compile Include="Security\MimeSniffer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

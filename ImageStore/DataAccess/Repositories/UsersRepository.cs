@@ -6,6 +6,8 @@ namespace DataAccess.Repositories
 {
     public sealed class UsersRepository : BaseRepository, IBasicRepository<User, string>
     {
+        #region user methods
+
         public string Add(User user)
         {
             if (user == null)
@@ -44,6 +46,10 @@ namespace DataAccess.Repositories
             return StoreDbEntities.Users.Any(where);
         }
 
+        #endregion
+
+        #region role methods
+
         public Role GetRole(Func<Role, bool> where)
         {
             return StoreDbEntities.Roles.SingleOrDefault(where);
@@ -54,5 +60,13 @@ namespace DataAccess.Repositories
             var roles = StoreDbEntities.Roles;
             return roles;
         }
+
+        public IQueryable<Permission> GetPermissions()
+        {
+            var permissions = StoreDbEntities.Permissions;
+            return permissions;
+        }
+
+        #endregion
     }
 }

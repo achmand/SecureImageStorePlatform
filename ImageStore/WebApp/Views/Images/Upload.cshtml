@@ -1,0 +1,35 @@
+﻿@{
+    ViewBag.Title = "Upload Image";
+}
+
+<h2>Upload Image</h2>
+<br />
+@if (ViewBag.Message != null)
+{
+    <p>@ViewBag.Message</p>
+}
+@using (Html.BeginForm("Upload", "Images", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label class="col-md-2 control-label" for="title">Title</label>
+        <div class="col-md-10">
+            <input class="form-control" data-val="true" data-val-required="The title field is required." id="title" name="title" type="text" value="">
+            <span class="field-validation-valid text-danger" data-valmsg-for="title" data-valmsg-replace="true"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label" for="image">Image</label>
+        <div class="col-md-10">
+            <input class="form-control" data-val="true" data-val-required="The image field is required." id="image" name="file" type="file" value="">
+            <span class="field-validation-valid text-danger" data-valmsg-for="image" data-valmsg-replace="true"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Upload File" />
+        </div>
+    </div>
+}

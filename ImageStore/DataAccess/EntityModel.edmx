@@ -10,10 +10,12 @@
             <PropertyRef Name="ImageId" />
           </Key>
           <Property Name="ImageId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="ImagePath" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="UsernameFk" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Signature" Type="varchar(max)" Nullable="false" />
           <Property Name="Version" Type="int" Nullable="false" />
-          <Property Name="DateCreated" Type="int" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="LogExceptions">
           <Key>
@@ -30,6 +32,7 @@
           </Key>
           <Property Name="MenuId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="MenuName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="MenuPath" Type="varchar" MaxLength="150" Nullable="false" />
           <Property Name="Version" Type="int" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
         </EntityType>
@@ -76,8 +79,11 @@
           <Property Name="LoginTries" Type="int" Nullable="false" />
           <Property Name="Locked" Type="bit" Nullable="false" />
           <Property Name="Actived" Type="bit" Nullable="false" />
+          <Property Name="PublicKey" Type="varchar(max)" Nullable="false" />
+          <Property Name="PrivateKey" Type="varchar(max)" Nullable="false" />
           <Property Name="Version" Type="int" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="IsExternal" Type="bit" Nullable="false" />
         </EntityType>
         <Association Name="FK_Images_Users">
           <End Role="Users" Type="Self.Users" Multiplicity="1" />
@@ -218,10 +224,12 @@
             <PropertyRef Name="ImageId" />
           </Key>
           <Property Name="ImageId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ImagePath" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="UsernameFk" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Signature" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Version" Type="Int32" Nullable="false" />
-          <Property Name="DateCreated" Type="Int32" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="User" Relationship="ImageStoreDBModel.FK_Images_Users" FromRole="Image" ToRole="User" />
         </EntityType>
         <EntityType Name="LogException">
@@ -239,6 +247,7 @@
           </Key>
           <Property Name="MenuId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="MenuName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="MenuPath" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="Version" Type="Int32" Nullable="false" />
           <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="Roles" Relationship="ImageStoreDBModel.RolesMenus" FromRole="Menu" ToRole="Role" />
@@ -274,10 +283,13 @@
           <Property Name="LoginTries" Type="Int32" Nullable="false" />
           <Property Name="Locked" Type="Boolean" Nullable="false" />
           <Property Name="Actived" Type="Boolean" Nullable="false" />
+          <Property Name="PublicKey" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PrivateKey" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Version" Type="Int32" Nullable="false" />
           <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="Images" Relationship="ImageStoreDBModel.FK_Images_Users" FromRole="User" ToRole="Image" />
           <NavigationProperty Name="Role" Relationship="ImageStoreDBModel.FK_Users_Roles" FromRole="User" ToRole="Role" />
+          <Property Name="IsExternal" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_Images_Users">
           <End Type="ImageStoreDBModel.User" Role="User" Multiplicity="1" />
@@ -322,8 +334,10 @@
               <MappingFragment StoreEntitySet="Images">
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="Signature" ColumnName="Signature" />
                 <ScalarProperty Name="UsernameFk" ColumnName="UsernameFk" />
                 <ScalarProperty Name="ImagePath" ColumnName="ImagePath" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="ImageId" ColumnName="ImageId" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -343,6 +357,7 @@
               <MappingFragment StoreEntitySet="Menus">
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="MenuPath" ColumnName="MenuPath" />
                 <ScalarProperty Name="MenuName" ColumnName="MenuName" />
                 <ScalarProperty Name="MenuId" ColumnName="MenuId" />
               </MappingFragment>
@@ -369,8 +384,11 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="ImageStoreDBModel.User">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="IsExternal" ColumnName="IsExternal" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="PrivateKey" ColumnName="PrivateKey" />
+                <ScalarProperty Name="PublicKey" ColumnName="PublicKey" />
                 <ScalarProperty Name="Actived" ColumnName="Actived" />
                 <ScalarProperty Name="Locked" ColumnName="Locked" />
                 <ScalarProperty Name="LoginTries" ColumnName="LoginTries" />

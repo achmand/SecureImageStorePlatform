@@ -13,25 +13,18 @@ namespace WebApp
     {
         public void ConfigureAuth(IAppBuilder app)
         {
-            app.CreatePerOwinContext(ApplicationDbContext.Create);
-            app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
-            app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
-
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
+                ExpireTimeSpan = TimeSpan.FromMinutes(10),
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/Account/Login"),
-                Provider = new CookieAuthenticationProvider
-                {
-                    OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager,
-                    ApplicationUser>(TimeSpan.FromMinutes(30),
-                    (manager, user) => user.GenerateUserIdentityAsync(manager))
-                }
+                LoginPath = new PathString("/Account/LogIn"),
+                CookieName = "SecureImageStore",
+                SlidingExpiration = true,
+                Provider = new CookieAuthenticationProvider()
             });
 
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
             app.UseTwoFactorSignInCookie(DefaultAuthenticationTypes.TwoFactorCookie, TimeSpan.FromMinutes(5));
-
             app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
             app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions
             {

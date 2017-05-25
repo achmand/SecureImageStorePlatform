@@ -27,8 +27,11 @@ namespace Common
         public int LoginTries { get; set; }
         public bool Locked { get; set; }
         public bool Actived { get; set; }
+        public string PublicKey { get; set; }
+        public string PrivateKey { get; set; }
         public int Version { get; set; }
         public System.DateTime DateCreated { get; set; }
+        public bool IsExternal { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Image> Images { get; set; }

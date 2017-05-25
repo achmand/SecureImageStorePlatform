@@ -1,0 +1,9 @@
+﻿@model WebApp.Models.ImageViewModel
+
+@{
+    ViewBag.Title = "View Image";
+}
+
+<h2>View Image</h2>
+
+<img src="data:image/jpg;base64,@Html.Raw(Convert.ToBase64String(Model.Image))" alt="@Model.Title" />

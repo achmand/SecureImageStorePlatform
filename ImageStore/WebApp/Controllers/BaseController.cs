@@ -1,23 +1,16 @@
 ﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web.Mvc;
+using WebApp.Handlers;
 
 namespace WebApp.Controllers
 {
     public class BaseController : Controller
     {
+        #region properties & variables 
+
         private HttpClient _httpClient;
-        public const string ApiUri = "http://localhost:8836/api/";
-
-        public BaseController()
-        {
-            _httpClient = HttpClientFactory.Create();
-            _httpClient.DefaultRequestHeaders.Accept.Clear();
-        }
-
-        public BaseController(HttpClient httpClient)
-        {
-            HttpClient = httpClient;
-        }
+        public const string ApiUri = "http://localhost:8836/api";
 
         public HttpClient HttpClient
         {
@@ -31,6 +24,26 @@ namespace WebApp.Controllers
             }
         }
 
+
+        #endregion
+
+        #region ctors 
+
+        public BaseController()
+        {
+            var authDelegating = new AuthDelegatingHandler();
+            _httpClient = HttpClientFactory.Create(authDelegating);
+            _httpClient.DefaultRequestHeaders.Accept.Clear();
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        }
+
+        public BaseController(HttpClient httpClient)
+        {
+            HttpClient = httpClient;
+        }
+
+        #endregion
+     
         protected override void Dispose(bool disposing)
         {
             if (disposing)

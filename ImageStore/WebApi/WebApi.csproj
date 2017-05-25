@@ -187,13 +187,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Attributes\HmacAuthenticationAttribute.cs" />
-    <Compile Include="Attributes\ValidationActionFilter.cs" />
+    <Compile Include="Attributes\HmacAuthAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Models\ResultChallenge.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Security\AsymmetricParameters.cs" />
-    <Compile Include="Security\SecurityUtil.cs" />
-    <Compile Include="Security\SymmetricParameters.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -210,7 +207,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

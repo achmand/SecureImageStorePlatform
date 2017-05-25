@@ -74,7 +74,7 @@
       <DependentUpon>CommonModels.tt</DependentUpon>
     </Compile>
     <Compile Include="UserPartial.cs" />
-    <Compile Include="Utilities\HomeLessMethods.cs" />
+    <Compile Include="Utilities\HomelessMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="CommonModels.tt">

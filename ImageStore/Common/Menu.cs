@@ -22,6 +22,7 @@ namespace Common
     
         public int MenuId { get; set; }
         public string MenuName { get; set; }
+        public string MenuPath { get; set; }
         public int Version { get; set; }
         public System.DateTime DateCreated { get; set; }
     

@@ -15,10 +15,12 @@ namespace Common
     public partial class Image
     {
         public int ImageId { get; set; }
+        public string Title { get; set; }
         public string ImagePath { get; set; }
         public string UsernameFk { get; set; }
+        public string Signature { get; set; }
         public int Version { get; set; }
-        public int DateCreated { get; set; }
+        public System.DateTime DateCreated { get; set; }
     
         public virtual User User { get; set; }
     }
