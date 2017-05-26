@@ -117,7 +117,7 @@ namespace WebApp.Controllers
 
                         var result = ImagesDomain.Add(relativePath, Convert.ToBase64String(signatureBytes), username, title);
                         file.SaveAs(absolutePath);
-                        var cipher = encryption.SymmetricEncryptFile(file.InputStream, user);
+                        var cipher = encryption.HybridEncrypt(file.InputStream, user);
                         System.IO.File.WriteAllBytes(absolutePath, cipher);
                         ViewBag.Message = result.MessageResult;
                     }
@@ -280,7 +280,7 @@ namespace WebApp.Controllers
                 var user = UsersDomain.GetUser(username);
                 memoryStream.Position = 0;
                 var encryption = new Encryption();
-                var decryptedBytes = encryption.SymmetricDecryptFile(memoryStream, user);
+                var decryptedBytes = encryption.HybridDecrypt(memoryStream, user);
                 var signature = Convert.FromBase64String(image.Signature);
                 var checkSignature = encryption.VerifyFile(signature, decryptedBytes, user);
 
@@ -288,6 +288,7 @@ namespace WebApp.Controllers
                 {
                     return decryptedBytes;
                 }
+
             }
             return null;
         }

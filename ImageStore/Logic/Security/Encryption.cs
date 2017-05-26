@@ -10,19 +10,20 @@ namespace Logic.Security
     {
         #region symmetric 
 
-        public static SymmetricParameters GenerateSymmetricParameters(User user)
+        private static SymmetricParameters GenerateSymmetricParameters(User user)
         {
             if (user == null)
             {
                 throw new Exception("User cannot be null");
             }
 
+            // having a random IV is crucial
+            var guid = Guid.NewGuid();
             var username = user.Username;
             var password = user.Password;
-            var salt = username + password;
+            var salt = guid + username + password;
 
             var saltBytes = Encoding.UTF32.GetBytes(salt);
-
             using (var rijndael = Rijndael.Create())
             using (var rfc = new Rfc2898DeriveBytes(password, saltBytes))
             {
@@ -36,57 +37,30 @@ namespace Logic.Security
             }
         }
 
-        public string SymmetricEncrypt(string data, User user)
+        private static byte[] SymmetricEncryptFile(Stream inputStream, User user, out SymmetricParameters symmetricParameters)
         {
             if (user == null)
             {
                 throw new Exception("User cannot be null");
             }
 
-            var symmetricParams = GenerateSymmetricParameters(user);
-            var dataBytes = Encoding.UTF32.GetBytes(data);
-
-            using (var memoryStream = new MemoryStream())
-            using (var rijndael = Rijndael.Create())
-            using (var cryptoStream = new CryptoStream(memoryStream, rijndael.CreateEncryptor(symmetricParams.SecretKey, symmetricParams.IV), CryptoStreamMode.Write))
-            {
-                cryptoStream.Write(dataBytes, 0, dataBytes.Length);
-                cryptoStream.FlushFinalBlock();
-                memoryStream.Position = 0;
-
-                var encData = memoryStream.ToArray();
-                cryptoStream.Close();
-                memoryStream.Close();
-                return Convert.ToBase64String(encData);
-            }
-        }
-
-        public byte[] SymmetricEncryptFile(Stream inputStream, User user)
-        {
-            if (user == null)
-            {
-                throw new Exception("User cannot be null");
-            }
-
-            var symmetricParams = GenerateSymmetricParameters(user);
+            symmetricParameters = GenerateSymmetricParameters(user);
             using (var rijndael = Rijndael.Create())
             using (var memoryStream = new MemoryStream())
-            using (var cryptoStream = new CryptoStream(memoryStream, rijndael.CreateEncryptor(symmetricParams.SecretKey, symmetricParams.IV), CryptoStreamMode.Write))
+            using (var cryptoStream = new CryptoStream(memoryStream, rijndael.CreateEncryptor(symmetricParameters.SecretKey, symmetricParameters.IV), CryptoStreamMode.Write))
             {
                 inputStream.CopyTo(cryptoStream);
                 cryptoStream.FlushFinalBlock();
                 memoryStream.Position = 0;
-
                 return memoryStream.ToArray();
             }
         }
 
-        public byte[] SymmetricDecryptFile(Stream cipher, User user)
+        private static byte[] SymmetricDecryptFile(Stream cipher, SymmetricParameters symmetricParameters)
         {
-            var symmetricParams = GenerateSymmetricParameters(user);
             using (var rijndael = Rijndael.Create())
             using (var memoryStream = new MemoryStream())
-            using (var cryptoStream = new CryptoStream(memoryStream, rijndael.CreateDecryptor(symmetricParams.SecretKey, symmetricParams.IV), CryptoStreamMode.Write))
+            using (var cryptoStream = new CryptoStream(memoryStream, rijndael.CreateDecryptor(symmetricParameters.SecretKey, symmetricParameters.IV), CryptoStreamMode.Write))
             {
                 cipher.CopyTo(cryptoStream);
                 cryptoStream.FlushFinalBlock();
@@ -113,7 +87,7 @@ namespace Logic.Security
             }
         }
 
-        public byte[] AsymmetricEncrypt(byte[] input, User user)
+        private static byte[] AsymmetricEncrypt(byte[] input, User user)
         {
             var publicKey = user.PublicKey;
             using (var rsa = new RSACryptoServiceProvider())
@@ -124,7 +98,7 @@ namespace Logic.Security
             }
         }
 
-        public byte[] AsymmetricDecrypt(byte[] input, User user)
+        private static byte[] AsymmetricDecrypt(byte[] input, User user)
         {
             var privateKey = user.PrivateKey;
             using (var rsa = new RSACryptoServiceProvider())
@@ -132,6 +106,63 @@ namespace Logic.Security
                 rsa.FromXmlString(privateKey);
                 var cipher = rsa.Decrypt(input, true);
                 return cipher;
+            }
+        }
+
+        #endregion
+
+        #region hybrid encryption 
+
+        public byte[] HybridEncrypt(Stream inputStream, User user)
+        {
+            SymmetricParameters symmetricParameters;
+            var symmetricEncrypt = SymmetricEncryptFile(inputStream, user, out symmetricParameters);
+            var secretKey = symmetricParameters.SecretKey;
+            var iv = symmetricParameters.IV;
+
+            var encSecretKey = AsymmetricEncrypt(secretKey, user);
+            var encIv = AsymmetricEncrypt(iv, user);
+
+            var secIvBytes = new byte[256];
+            Array.Copy(encSecretKey, secIvBytes, 128);
+            Array.Copy(encIv, 0, secIvBytes, 128, 128);
+
+            var fileContents = new byte[secIvBytes.Length + symmetricEncrypt.Length];
+            Array.Copy(secIvBytes, 0, fileContents, 0, 256);
+            Array.Copy(symmetricEncrypt, 0, fileContents, 256, symmetricEncrypt.Length);
+
+            return fileContents;
+        }
+
+        public byte[] HybridDecrypt(Stream inputStream, User user)
+        {
+            using (var streamReader = new MemoryStream())
+            {
+                inputStream.CopyTo(streamReader);
+                var result = streamReader.ToArray();
+
+                var secretKeyEnc = new byte[128];
+                var ivEnc = new byte[128];
+
+                Array.Copy(result, 0, secretKeyEnc, 0, 128);
+                Array.Copy(result, 128, ivEnc, 0, 128);
+
+                var contentLength = result.Length - 256;
+                var content = new byte[contentLength];
+
+                Array.Copy(result, 256, content, 0, contentLength);
+
+                var secretKey = AsymmetricDecrypt(secretKeyEnc, user);
+                var iv = AsymmetricDecrypt(ivEnc, user);
+
+                var symmetricKeys = new SymmetricParameters
+                {
+                    SecretKey = secretKey,
+                    IV = iv
+                };
+
+                var stream = new MemoryStream(content);
+                return SymmetricDecryptFile(stream, symmetricKeys);
             }
         }
 
